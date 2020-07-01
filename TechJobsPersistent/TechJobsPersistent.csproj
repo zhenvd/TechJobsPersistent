@@ -9,5 +9,9 @@
   <ItemGroup>
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Employer\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
   </ItemGroup>
 </Project>
