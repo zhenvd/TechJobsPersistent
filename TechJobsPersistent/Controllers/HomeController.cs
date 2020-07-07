@@ -6,32 +6,53 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TechJobsPersistent.Models;
+using TechJobsPersistent.ViewModels;
+using TechJobsPersistent.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace TechJobsPersistent.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private JobDbContext context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(JobDbContext dbContext)
         {
-            _logger = logger;
+            context = dbContext;
         }
 
         public IActionResult Index()
         {
-            return View();
+            List<Job> jobs = context.Jobs.Include(j => j.Employer).ToList();
+
+            return View(jobs);
         }
 
-        public IActionResult Privacy()
+        [HttpGet("/Add")]
+        public IActionResult AddJob()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult ProcessAddJobForm()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
+        }
+
+        public IActionResult Detail(int id)
+        {
+            Job theJob = context.Jobs
+                .Include(j => j.Employer)
+                .Single(j => j.Id == id);
+
+            List<JobSkill> jobSkills = context.JobSkills
+                .Where(js => js.JobId == id)
+                .Include(js => js.Skill)
+                .ToList();
+
+            JobDetailViewModel viewModel = new JobDetailViewModel(theJob, jobSkills);
+            return View(viewModel);
         }
     }
 }
