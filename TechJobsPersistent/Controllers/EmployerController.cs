@@ -28,8 +28,7 @@ namespace TechJobsPersistent.Controllers
             return View();
         }
 
-        [HttpGet("/about/{employerId?}")]
-        public IActionResult About(int employerId)
+        public IActionResult About(int id)
         {
             return View();
         }
